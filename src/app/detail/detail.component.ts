@@ -78,7 +78,9 @@ export class DetailComponent implements OnInit {
     // Listen to changes in the route params
     this.route.params.subscribe(params => {
       this.setFormForId(params['id']);
-    })
+    });
+
+    this.setFormForId(this.route.snapshot.paramMap.get('id'));
 
     // Setup the change listener to keep the local copy sync'd
     this.reactiveForm.valueChanges.subscribe(content => {
@@ -88,10 +90,10 @@ export class DetailComponent implements OnInit {
     });
   }
 
-  setFormForId(id: string | null) {
+  async setFormForId(id: string | null) {
     console.log('SetForID: ' + id);
     if (id) {
-      let newItem : Item | null = this.contentService.getContentById(id);
+      let newItem : Item | null = await this.contentService.getContentById(id);
       console.log('New ITEM: ' + JSON.stringify(newItem));
       if (newItem) {
         // an existing item exists and was found so update local copy and set form

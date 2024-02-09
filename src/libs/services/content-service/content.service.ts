@@ -4,6 +4,7 @@ import {v4} from "uuid";
 import {Endpoint, ENDPOINT_BASE, EndpointPaths} from "../../model/endpoints";
 import {DEFAULT_ITEM, Item} from "../../model/item";
 import {Router} from "@angular/router";
+import {timeout} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,7 @@ export class ContentService {
   private router: Router = inject(Router);
   private selectedContent?: Item;
   private contentList: Item[] = [];
+  private dataLoaded: boolean = false;
 
   constructor() {
     // Later revision add error handling with observables from rxjs
@@ -21,6 +23,7 @@ export class ContentService {
       .subscribe(resp => {
         this.contentList = resp;
         console.log('Response: ' + JSON.stringify(resp));
+        this.dataLoaded = true;
       });
   }
 
@@ -78,7 +81,8 @@ export class ContentService {
     console.log('RESET');
   }
 
-  getContentById(id: string): Item | null {
+  async getContentById(id: string): Promise<Item | null> {
+    await this.waitForCondition(() => this.dataLoaded);
     let idx: number = this.findIdxById(id);
 
     if (idx !== -1) {
@@ -93,5 +97,11 @@ export class ContentService {
 
   private findIdxById(id: string | null) {
     return this.contentList.findIndex(content => content.id === id);
+  }
+
+  private waitForCondition(condition: Function) : Promise<any> {
+    let wait: (done: Function) => any = (done: Function) => (condition()
+      ? done() : setTimeout(() => wait(done), 200))
+    return new Promise(wait);
   }
 }
