@@ -75,22 +75,24 @@ export class DetailComponent implements OnInit {
         'expirationDate': ['']
       }, {validators: futureDateValidator});
 
-    // If navigated to an id load it into the form
-    this.setFormForId(this.route.snapshot.paramMap.get('id'));
+    // Listen to changes in the route params
+    this.route.params.subscribe(params => {
+      this.setFormForId(params['id']);
+    })
 
     // Setup the change listener to keep the local copy sync'd
-    this.reactiveForm.valueChanges.pipe(
-      debounceTime(400),
-      distinctUntilChanged()
-    ).subscribe(content => {
+    this.reactiveForm.valueChanges.subscribe(content => {
+      console.log('DATA CHANGE: ' + JSON.stringify(content));
       this.localContent = {...DEFAULT_ITEM, ...content};
       console.log("Content State New: " + JSON.stringify(this.localContent));
     });
   }
 
   setFormForId(id: string | null) {
+    console.log('SetForID: ' + id);
     if (id) {
       let newItem : Item | null = this.contentService.getContentById(id);
+      console.log('New ITEM: ' + JSON.stringify(newItem));
       if (newItem) {
         // an existing item exists and was found so update local copy and set form
         this.localContent = {...newItem};

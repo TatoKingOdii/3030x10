@@ -32,6 +32,7 @@ export class ContentService {
 
   updateContent(contentEvent: Item) {
     let idx: number = this.findIdxForContent(contentEvent);
+    console.log('Update Content: ' + idx);
 
     // Weird quirk with the form the state of the expiration is still set
     // if it was previously, so clear it out here before saving
@@ -74,6 +75,7 @@ export class ContentService {
   resetSelectedContent() {
     this.selectedContent = undefined;
     this.router.navigate(['dashboard/']);
+    console.log('RESET');
   }
 
   getContentById(id: string): Item | null {

@@ -12,7 +12,7 @@
         </mat-card-title>
       </ng-template>
     </mat-card-header>
-    <form [formGroup]="reactiveForm" (ngSubmit)="onContentSave.emit(localContent)">
+    <form [formGroup]="reactiveForm" (ngSubmit)="onContentSave.emit(localContent); setFormForId(null)">
       <mat-card-content>
         <mat-form-field>
           <input matInput type="text" formControlName="name" placeholder="Name"/>
